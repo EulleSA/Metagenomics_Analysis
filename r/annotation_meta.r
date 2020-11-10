@@ -1,6 +1,5 @@
-
 columns_csv <- c('qseqid' ,'sseqid' ,'pident' ,'length','mismatch','gapopen','qstart' ,'qend' ,'sstart' ,'send' ,'evalue' ,'bitscore')
-df_besthits <- read.csv("C:\\Users\\eulle\\Documents\\besthits/besthits_CoSQG.m8",header = FALSE,col.names = columns_csv,sep = "\t",stringsAsFactors = FALSE)
+df_besthits <- read.csv("C:\\Users\\eulle\\Documents\\metagenomica//besthits_CoSQG.m8",header = FALSE,col.names = columns_csv,sep = "\t",stringsAsFactors = FALSE)
 colnames(df_besthits) <- columns_csv
 
 df_besthits <- subset(df_besthits, select = c("qseqid","sseqid"))
@@ -11,8 +10,8 @@ id <- gsub("^.*\\|(.*)\\|.*$", "\\1", df_besthits$sseqid)
 id <- as.vector(gsub("GI:|gi:|UniProtKB/Swiss-Prot:|UniProtKB/TrEMBL:(.*)|p$", "\\1", id))
 df_besthits["ID"] <- id
 
-organisms <- as.vector(gsub("^.*\\|.*\\|(.*)$", "\\1", df_besthits$sseqid))
-df_besthits["Organisms"] <- organisms
+#organisms <- as.vector(gsub("^.*\\|.*\\|(.*)$", "\\1", df_besthits$sseqid))
+#df_besthits["Organisms"] <- organisms
 
 proteins <- as.vector(gsub("(^.*)\\|.*\\|.*$", "\\1", df_besthits$sseqid))
 df_besthits["Proteins"] <- proteins
@@ -24,13 +23,13 @@ df_besthits_Uniprot <- df_besthits[grepl("[A-Z]+", df_besthits$ID),]
 df_besthits_gi <- df_besthits[!grepl("[A-Z]+", df_besthits$ID),]
 
 # Concatenar os dados
-df_gi_uniprot <-  read.csv("C:\\Users\\eulle\\Documents\\gi_number-uni/ROCHA2/df_gi_uniprot.csv",header=TRUE,sep = "\t",stringsAsFactors = FALSE)
+df_gi_uniprot <-  read.csv("D:/eulle/importante/df_gi_uniprot-CoSQG.csv",header=TRUE,sep = "\t",stringsAsFactors = FALSE)
 
 if (length(df_gi_uniprot[duplicated(df_gi_uniprot$Uniprot_ID),"Uniprot_ID"]) > 0 ){
   df_gi_uniprot <- df_gi_uniprot[!duplicated(df_gi_uniprot[ , "Uniprot_ID"]),]
-
+  
 }else{
-  print("NÃ£o tem valores duplicados")
+  print("Não tem valores duplicados")
 }
 
 df_besthits_gi <- merge(df_besthits_gi,df_gi_uniprot,by.x = "ID",by.y = "GI",all.x = TRUE)
@@ -46,7 +45,10 @@ df_besthits_Uniprot[is.na(df_besthits_Uniprot$KO),"KO"] <- "NA"
 
 df_besthits <- rbind(df_besthits_gi,df_besthits_Uniprot)
 
-write.table(df_besthits[df_besthits$Pathway!="NA","qseqid"],"besthits_pathways-CoSQG.txt",row.names = FALSE,col.names = FALSE,quote = FALSE)
+# Arrumar isso.
+write.table(df_besthits[df_besthits$Pathway!="NA","qseqid"],"C:/Users/eulle/Documents/metagenomica/besthits_pathways-CoSQG.txt",row.names = FALSE,col.names = FALSE,quote = FALSE)
+write.table(df_besthits[df_besthits$Pathway!="NA",c("ID","qseqid","Proteins","KO","Pathway")],"C:/Users/eulle/Documents/metagenomica/besthits_pathways-CoSQG-julia.csv",sep = "]", col.names = TRUE, quote = FALSE, row.names = FALSE)
+
 
 ### Gerar a imagem dos organismos
 
@@ -94,7 +96,7 @@ pathways <- strsplit(as.character(pathways$Pathway), "\\;")
 pathways <- unlist(pathways,use.names=FALSE)
 
 
-df_biosurfdb_pathways <- read.csv("C:\\Users\\eulle\\OneDrive/Ãrea de Trabalho/Biosurfdb.csv",header=TRUE,sep = ",",stringsAsFactors = FALSE)
+df_biosurfdb_pathways <- read.csv("C:\\Users\\eulle\\OneDrive/Área de Trabalho/Biosurfdb.csv",header=TRUE,sep = ",",stringsAsFactors = FALSE)
 pathways <- data.frame(Pathways=pathways,stringsAsFactors = FALSE) 
 pathways <- merge(pathways,df_biosurfdb_pathways,by.x="Pathways",by.y="name",all.x = TRUE)
 pathways <- pathways[!is.na(pathways$family),"family"]
@@ -106,7 +108,7 @@ family_counts_surfc_degrad <- subset(family_counts,Family=="Degradation" | Famil
 df_base_family <- ggplot(data = family_counts_surfc_degrad,aes(x=family_counts_surfc_degrad$counts,y=reorder(as.character(family_counts_surfc_degrad$Family),family_counts_surfc_degrad$counts)))
 df_base_family + geom_bar(stat="identity", color='black',fill='#FF9999') +ggtitle("Pathways grouped by Biosurfdb's families") + xlab("Count of Pathways") + ylab("Biosurfdb Families") + scale_x_continuous(limits = c(0, 25000), breaks = seq.int(0, 25000, 5000))
 
-# GERAR GRÃFICO SOBRE O QUÃƒO COMPLETADO ESTÃ A ROTA
+# GERAR GRÁFICO SOBRE O QUÃO COMPLETADO ESTÁ A ROTA
 
 df_kos_count_plot <- ggplot(data=df_kos_count,aes(x=df_kos_count$KO_per_total,y=reorder(df_kos_count$Name,df_kos_count$KO_per_total)))
 df_kos_count_plot + geom_bar(stat="identity", color='black',fill='#FF9999') + xlab("Count of KO in percentage") + ylab("Pathways")+ggtitle("Count of pathways per compunds") + scale_x_continuous(limits = c(0, 30), breaks = seq.int(0, 30, 10))
@@ -116,7 +118,3 @@ df_kos_count_plot + geom_bar(stat="identity", color='black',fill='#FF9999') + xl
 df_kos_count_10 <- head(df_kos_count[with(df_kos_count,order(-KO_per_total)),],n=10L)
 df_kos_count_plot <- ggplot(data=df_kos_count_10,aes(x=df_kos_count_10$KO_per_total,y=reorder(df_kos_count_10$Name,df_kos_count_10$KO_per_total)))
 df_kos_count_plot + geom_bar(stat="identity", color='black',fill='#FF9999') + xlab("KO rate") + ylab("Pathways") + scale_x_continuous(limits = c(0, 30), breaks = seq.int(0, 30, 10)) + ggtitle("KO rate (found/pathway total)")
-
-
-
-
