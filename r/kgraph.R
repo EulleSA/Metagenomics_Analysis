@@ -49,11 +49,17 @@ pathway2dataframe <- function(pathway){
   return(aux)
 }
 
-
+uncollapse <- function(df_pathway){
+  colnames(df_pathway) <- c("key", "value")
+  df_pathway <- df_pathway %>%
+    mutate(key = strsplit(key, ";")) %>%
+    unnest(key)
+  return(df_pathway)
+}
 # caso de uso
 
-pathway <- "01054"
-df_pathway <- pathway2dataframe(paste0("ko", pathway))
+
+df_pathway <- pathway2dataframe("ko00281")
 
 # convertendo ko para ec pra rota ficar mais enxuta - DUVIDA
 
@@ -71,14 +77,6 @@ df_pathway$node2 <- gsub("^ko:", "", df_pathway$node2)
 #ecs[ecs==""] <- NA
 #df_pathway[] <- ecs[unlist(df_pathway)]
 #df_pathway <- unique(df_pathway)
-
-uncollapse <- function(df_pathway){
-  colnames(df_pathway) <- c("key", "value")
-  df_pathway <- df_pathway %>%
-    mutate(key = strsplit(key, ";")) %>%
-    unnest(key)
-  return(df_pathway)
-}
 
 df_pathway <- unique(uncollapse(df_pathway))
 df_pathway <- unique(uncollapse(df_pathway[, c(2,1)]))[, c(2,1)]
@@ -98,9 +96,9 @@ colnames(df_pathway) <- c("node1", "node2")
 
 pepa <- graph_from_data_frame(df_pathway, TRUE)
 
-library(RedeR)
-rdp <- RedPort()
-calld(rdp)
-addGraph(rdp, pepa)
-
-plot(pepa)
+# library(RedeR)
+# rdp <- RedPort()
+# calld(rdp)
+# addGraph(rdp, pepa)
+# 
+# plot(pepa)
