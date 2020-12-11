@@ -3,7 +3,7 @@ library(future)
 library(furrr)
 library("tidyverse")
 library("thacklr")
-df_eggnog <- read_eggnog("D:/Downloads/CoSqG.emapper.annotations")
+
 # colnames_eggnog <- "query_name.seed_eggNOG_ortholog.seed_ortholog_evalue.seed_ortholog_score.best_tax_level.Preferred_name.GOs.EC.KEGG_ko.KEGG_Pathway.KEGG_Module.KEGG_Reaction.KEGG_rclass.BRITE.KEGG_TC"
 # colnames_eggnog <- strsplit(colnames_eggnog,split = "\\.")[[1]]
 # colnames(df_eggnog) <- colnames_eggnog
@@ -82,6 +82,9 @@ dataframe_final <- function(csv){
   return(df_kos_count)
 }
 
+df_eggnog <- read_eggnog("D:/Downloads/CoSqG.emapper.annotations")
+
+
 df_kos_count_final <- dataframe_final(df_eggnog)
-write.csv(df_kos_count,"D:/Downloads/pathways_count",row.names = FALSE,col.names = TRUE)
+write.table(df_kos_count_final,"D:/Downloads/pathways_count_CoSqG",sep="\t",row.names = FALSE,col.names = TRUE)
 
