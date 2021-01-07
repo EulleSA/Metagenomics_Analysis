@@ -13,3 +13,4 @@
 After, go to the folder of the application downloaded and create the following folders:
         mkdir ...
 Put the metagenome file you want to analyze in the folder **"data_raw/"** 
+
