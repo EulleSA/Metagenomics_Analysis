@@ -1,7 +1,9 @@
 # Cactus: A pipeline for identification and visualization of microbial consortium interactions in metabolic pathways using shotgun metagenoma sequences.
 
-# TOPIC 1
-- Install Python3: https://www.python.org/downloads/release/python-391/
+The application is executed by command line, so It's necessary to have Linux environment. For Windows users is possible install the Linux Terminal 
+
+# Software Requeriments
+- Python3.7(or greater): https://www.python.org/downloads/release/python-391/
 
 - Install snakemake according with documentation: https://snakemake.readthedocs.io/en/stable/getting_started/installation.html
 
@@ -9,7 +11,7 @@
 
                                 git clone https://github.com/EulleSA/Metagenomics_Analysis.git.
 
-# TOPIC 2
+# Usage
 After, go to the folder of the application downloaded and create the following folders:
         mkdir ...
 Put the metagenome file you want to analyze in the folder **"data_raw/"** and execute the follow command line in the directory that have the file **Snakefile**:
