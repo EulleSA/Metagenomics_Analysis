@@ -5,6 +5,8 @@ The application is executed by command line, so It's necessary to have Linux env
 # Software Requeriments
 - Python3.7(or greater): https://www.python.org/downloads/release/python-391/
 
+- Install the latest version of conda: <>
+
 - Install snakemake according with documentation: https://snakemake.readthedocs.io/en/stable/getting_started/installation.html
 
 - Download the repository using the program "git". If you don't have the program "git" installed in your computer, access the following link: https://git-scm.com/downloads
@@ -14,9 +16,14 @@ The application is executed by command line, so It's necessary to have Linux env
 # Usage
 After, go to the folder of the application downloaded and create the following folders:
         mkdir ...
+
+Set the directory where the eggNOG database will be download:
+
+                export EGGNOG_DIR_DATA=<"The absolute path where the directory 'database/functional' was created.">
+
 Put the metagenome file you want to analyze in the folder **"data_raw/"** and execute the follow command line in the directory that have the file **Snakefile**:
 
-                                                    snakemake -p --cores
+                                                    snakemake -p --cores --use-conda
 
 # NOTES
 
